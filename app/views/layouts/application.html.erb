@@ -14,9 +14,11 @@
 	</div>
 	<div id="columns" >
 		<div id="side" >
+		  <% if @cart %>
 			<%= hidden_div_if(@cart.line_items.empty?, :id => "cart") do %>
 			<%= render @cart %>
 			<% end %>
+		  <% end %>
 		  
 			<a href="http://depot-hsz-t.heroku.com/" >Home</a><br />
 			<a href="http://depot-hsz-t.heroku.com/faq" >Questions</a><br />
