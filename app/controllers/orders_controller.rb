@@ -24,6 +24,12 @@ class OrdersController < ApplicationController
   # GET /orders/new
   # GET /orders/new.xml
   def new
+    @cart = current_cart
+	if @cart.line_items.empty?
+      redirect_to store_url, :notice => "Your cart is empty"
+      return
+    end
+  
     @order = Order.new
 
     respond_to do |format|
@@ -41,10 +47,14 @@ class OrdersController < ApplicationController
   # POST /orders.xml
   def create
     @order = Order.new(params[:order])
+	@order.add_line_items_from_cart(current_cart)
 
     respond_to do |format|
       if @order.save
-        format.html { redirect_to(@order, :notice => 'Order was successfully created.') }
+	    Cart.destroy(session[:cart_id])
+        session[:cart_id] = nil
+        format.html { redirect_to(store_url, :notice =>
+          'Thank you for your order.') }
         format.xml  { render :xml => @order, :status => :created, :location => @order }
       else
         format.html { render :action => "new" }
